@@ -1,21 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetType>library</TargetType>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>warnings</Nullable>
-        <LangVersion>12</LangVersion>
+        <LangVersion>10</LangVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <RuntimeIdentifiers>win-x86;win-x64;linux-x86;linux-x64;linux-arm;linux-arm64</RuntimeIdentifiers>
+    </PropertyGroup>
+
+    <PropertyGroup>
         <Title>MvsSharp</Title>
-        <Description>Cross-platform .NET wrapper for HikRobot(海康机器人) Camera SDK </Description>
+        <PackageVersion>1.0.0</PackageVersion>
+        <PackageId>Spartajet.MvsSharp</PackageId>
+        <Description>Cross-platform .NET wrapper for HikRobot(海康机器人) Camera SDK</Description>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>camera.png</PackageIcon>
+        <PackageProjectUrl>https://github.com/spartajet/MvsSharp</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/spartajet/MvsSharp</RepositoryUrl>
+        <RepositoryBranch>master</RepositoryBranch>
+        <RepositoryType>git</RepositoryType>
+        <Authors>Spartajet</Authors>
+        <PackageTags>hikrobot camera sdk</PackageTags>
+        <PackageVersion>1.0.0-alpha</PackageVersion>
+        <PackageReleaseNotes>First Version</PackageReleaseNotes>
+        <IncludeSymbols>true</IncludeSymbols>
+        <IncludeBuildOutput>true</IncludeBuildOutput>
+        <PlatformTarget>x86</PlatformTarget>
+        <AllowUnsafeBlocks>False</AllowUnsafeBlocks>
+        <SignAssembly>True</SignAssembly>
     </PropertyGroup>
 
     <ItemGroup>
-      
-        <None Include="README.md" Pack="true" PackagePath="\"/>
+        <None Include="../README.md" Pack="true" PackagePath="\" />
+        <None Include="../camera.png" Pack="true" PackagePath="\" />
+        <None Include="libs/win-x64/*.*" Pack="true" PackagePath="\runtimes\win-x64\native" />
+        <None Include="libs/win-x86/*.*" Pack="true" PackagePath="\runtimes\win-x86\native" />
+        <None Include="libs/linux-x64/*.*" Pack="true" PackagePath="\runtimes\linux-x64\native" />
+        <None Include="libs/linux-x86/*.*" Pack="true" PackagePath="\runtimes\linux-x86\native" />
+        <None Include="libs/linux-arm32/*.*" Pack="true" PackagePath="\runtimes\linux-arm32\native" />
+        <None Include="libs/linux-arm64/*.*" Pack="true" PackagePath="\runtimes\linux-arm64\native" />
     </ItemGroup>
 
 </Project>

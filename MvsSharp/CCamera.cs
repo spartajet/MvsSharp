@@ -1,12 +1,6 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: MvCamCtrl.NET.CCamera
-// Assembly: MvCamCtrl.Net, Version=4.1.0.3, Culture=neutral, PublicKeyToken=52fddfb3f94be800
-// MVID: 48858B75-944A-430D-BA88-8043A97023D9
-// Assembly location: C:\Program Files (x86)\MVS\Development\DotNet\win64\MvCamCtrl.Net.dll
-// XML documentation location: C:\Program Files (x86)\MVS\Development\DotNet\win64\MvCamCtrl.Net.xml
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using MvsSharp.CameraParams;
 
@@ -29,6 +23,8 @@ namespace MvsSharp
     /// <summary>设备信息(型号+序列号)</summary>
     private string strCameraInfo;
     private Stopwatch stopwatch = new Stopwatch();
+    private MV_DISPLAY_FRAME_INFO mvDisplayFrameInfo;
+    private MV_DISPLAY_FRAME_INFO_EX mvDisplayFrameInfoEx;
 
     /// <summary>内存拷贝</summary>
     /// <param name="dest">目标缓存</param>
@@ -863,7 +859,7 @@ namespace MvsSharp
     {
       if (pcDisplayInfo == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_DisplayOneFrame(this.handle, ref new MV_DISPLAY_FRAME_INFO()
+      this.mvDisplayFrameInfo = new MV_DISPLAY_FRAME_INFO()
       {
         enPixelType = pcDisplayInfo.Image.PixelType,
         hWnd = pcDisplayInfo.WindowHandle,
@@ -871,7 +867,8 @@ namespace MvsSharp
         nHeight = pcDisplayInfo.Image.Height,
         nWidth = pcDisplayInfo.Image.Width,
         pData = pcDisplayInfo.Image.ImageAddr
-      });
+      };
+      return CCamCtrlRef.MV_CC_DisplayOneFrame(this.handle, ref this.mvDisplayFrameInfo);
     }
 
     /// <summary>
@@ -883,14 +880,15 @@ namespace MvsSharp
     {
       if (pcDisplayInfoEx == null || IntPtr.Zero == pcDisplayInfoEx.WindowHandle)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_DisplayOneFrameEx(this.handle, pcDisplayInfoEx.WindowHandle, ref new MV_DISPLAY_FRAME_INFO_EX()
+      this.mvDisplayFrameInfoEx = new MV_DISPLAY_FRAME_INFO_EX()
       {
         enPixelType = pcDisplayInfoEx.ImageEx.PixelType,
         nDataLen = pcDisplayInfoEx.ImageEx.FrameLen,
         nHeight = pcDisplayInfoEx.ImageEx.nExtendHeight,
         nWidth = pcDisplayInfoEx.ImageEx.nExtendWidth,
         pData = pcDisplayInfoEx.ImageAddr
-      });
+      };
+      return CCamCtrlRef.MV_CC_DisplayOneFrameEx(this.handle, pcDisplayInfoEx.WindowHandle, ref this.mvDisplayFrameInfoEx);
     }
 
     /// <summary>
@@ -1246,7 +1244,8 @@ namespace MvsSharp
         this.DestroyHandle();
         this.handle = IntPtr.Zero;
       }
-      return CCamCtrlRef.MV_CC_CreateHandleByGenTL(ref this.handle, ref new MV_GENTL_DEV_INFO()
+
+      MV_GENTL_DEV_INFO mvGentlDevInfo = new MV_GENTL_DEV_INFO()
       {
         chDeviceID = pcDevInfo.chDeviceID,
         chDeviceVersion = pcDevInfo.chDeviceVersion,
@@ -1258,7 +1257,8 @@ namespace MvsSharp
         chUserDefinedName = pcDevInfo.chUserDefinedName,
         chVendorName = pcDevInfo.chVendorName,
         nCtiIndex = pcDevInfo.nCtiIndex
-      });
+      };
+      return CCamCtrlRef.MV_CC_CreateHandleByGenTL(ref this.handle, ref mvGentlDevInfo);
     }
 
     /// <summary>Device Local Upgrade</summary>
@@ -1654,13 +1654,14 @@ namespace MvsSharp
     {
       if (pcGammaParam == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_SetBayerGammaParam(this.handle, ref new MV_CC_GAMMA_PARAM()
+      MV_CC_GAMMA_PARAM mvCcGammaParam = new MV_CC_GAMMA_PARAM()
       {
         enGammaType = pcGammaParam.GammaType,
         fGammaValue = pcGammaParam.GammaValue,
         nGammaCurveBufLen = pcGammaParam.GammaCurveBufLen,
         pGammaCurveBuf = pcGammaParam.GammaCurveBuf
-      });
+      };
+      return CCamCtrlRef.MV_CC_SetBayerGammaParam(this.handle, ref mvCcGammaParam);
     }
 
     /// <summary>Set CCM param</summary>
@@ -1670,11 +1671,12 @@ namespace MvsSharp
     {
       if (pcCCMParam == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_SetBayerCCMParam(this.handle, ref new MV_CC_CCM_PARAM()
+      MV_CC_CCM_PARAM mvCcCcmParam = new MV_CC_CCM_PARAM()
       {
         bCCMEnable = pcCCMParam.CCMEnable,
         nCCMat = pcCCMParam.CCMat
-      });
+      };
+      return CCamCtrlRef.MV_CC_SetBayerCCMParam(this.handle, ref mvCcCcmParam);
     }
 
     /// <summary>Set CCM param</summary>
@@ -1684,12 +1686,13 @@ namespace MvsSharp
     {
       if (pcCCMParam == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_SetBayerCCMParamEx(this.handle, ref new MV_CC_CCM_PARAM_EX()
+      MV_CC_CCM_PARAM_EX mvCcCcmParamEx = new MV_CC_CCM_PARAM_EX()
       {
         bCCMEnable = pcCCMParam.CCMEnable,
         nCCMat = pcCCMParam.CCMat,
         nCCMScale = pcCCMParam.CCMScale
-      });
+      };
+      return CCamCtrlRef.MV_CC_SetBayerCCMParamEx(this.handle, ref mvCcCcmParamEx);
     }
 
     /// <summary>High Bandwidth Decode</summary>
@@ -1754,11 +1757,12 @@ namespace MvsSharp
     {
       if (pcFileAccess == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_FileAccessRead(this.handle, ref new MV_CC_FILE_ACCESS()
+      MV_CC_FILE_ACCESS mvCcFileAccess = new MV_CC_FILE_ACCESS()
       {
         pDevFileName = pcFileAccess.pDevFileName,
         pUserFileName = pcFileAccess.pUserFileName
-      });
+      };
+      return CCamCtrlRef.MV_CC_FileAccessRead(this.handle, ref mvCcFileAccess);
     }
 
     /// <summary>Read the file from the camera</summary>
@@ -1768,13 +1772,14 @@ namespace MvsSharp
     {
       if (pcFileAccessEx == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_FileAccessReadEx(this.handle, ref new MV_CC_FILE_ACCESS_EX()
+      MV_CC_FILE_ACCESS_EX mvCcFileAccessEx = new MV_CC_FILE_ACCESS_EX()
       {
         pUserFileBuf = pcFileAccessEx.pUserFileBuf,
         nFileBufSize = pcFileAccessEx.nFileBufSize,
         nFileBufLen = pcFileAccessEx.nFileBufLen,
         pDevFileName = pcFileAccessEx.pDevFileName
-      });
+      };
+      return CCamCtrlRef.MV_CC_FileAccessReadEx(this.handle, ref mvCcFileAccessEx);
     }
 
     /// <summary>Write the file to camera</summary>
@@ -1784,11 +1789,12 @@ namespace MvsSharp
     {
       if (pcFileAccess == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_FileAccessWrite(this.handle, ref new MV_CC_FILE_ACCESS()
+      MV_CC_FILE_ACCESS mvCcFileAccess = new MV_CC_FILE_ACCESS()
       {
         pDevFileName = pcFileAccess.pDevFileName,
         pUserFileName = pcFileAccess.pUserFileName
-      });
+      };
+      return CCamCtrlRef.MV_CC_FileAccessWrite(this.handle, ref mvCcFileAccess);
     }
 
     /// <summary>Write the file to camera</summary>
@@ -1798,13 +1804,14 @@ namespace MvsSharp
     {
       if (pcFileAccessEx == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_FileAccessWriteEx(this.handle, ref new MV_CC_FILE_ACCESS_EX()
+      MV_CC_FILE_ACCESS_EX mvCcFileAccessEx = new MV_CC_FILE_ACCESS_EX()
       {
         pUserFileBuf = pcFileAccessEx.pUserFileBuf,
         nFileBufSize = pcFileAccessEx.nFileBufSize,
         nFileBufLen = pcFileAccessEx.nFileBufLen,
         pDevFileName = pcFileAccessEx.pDevFileName
-      });
+      };
+      return CCamCtrlRef.MV_CC_FileAccessWriteEx(this.handle, ref mvCcFileAccessEx);
     }
 
     /// <summary>Get File Access Progress</summary>
@@ -1830,7 +1837,7 @@ namespace MvsSharp
     {
       if (pcRecordParam == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_StartRecord(this.handle, ref new MV_CC_RECORD_PARAM()
+      MV_CC_RECORD_PARAM mvCcRecordParam = new MV_CC_RECORD_PARAM()
       {
         enPixelType = pcRecordParam.enPixelType,
         nHeight = Convert.ToUInt16(pcRecordParam.Height),
@@ -1839,7 +1846,8 @@ namespace MvsSharp
         nBitRate = pcRecordParam.BitRate,
         enRecordFmtType = pcRecordParam.RecordFmtType,
         strFilePath = pcRecordParam.FilePath
-      });
+      };
+      return CCamCtrlRef.MV_CC_StartRecord(this.handle, ref mvCcRecordParam);
     }
 
     /// <summary>Input RAW data to Record</summary>
@@ -1849,11 +1857,12 @@ namespace MvsSharp
     {
       if (pcInputFrameInfo == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_InputOneFrame(this.handle, ref new MV_CC_INPUT_FRAME_INFO()
+      MV_CC_INPUT_FRAME_INFO mvCcInputFrameInfo = new MV_CC_INPUT_FRAME_INFO()
       {
         pData = pcInputFrameInfo.InImage.ImageAddr,
         nDataLen = pcInputFrameInfo.InImage.FrameLen
-      });
+      };
+      return CCamCtrlRef.MV_CC_InputOneFrame(this.handle, ref mvCcInputFrameInfo);
     }
 
     /// <summary>Stop Record</summary>
@@ -1867,7 +1876,7 @@ namespace MvsSharp
     {
       if (pcRectArea == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_DrawRect(this.handle, ref new MVCC_RECT_INFO()
+      MVCC_RECT_INFO mvccRectInfo = new MVCC_RECT_INFO()
       {
         fTop = pcRectArea.Top,
         fBottom = pcRectArea.Bottom,
@@ -1880,7 +1889,8 @@ namespace MvsSharp
           fB = pcRectArea.Color.Blue,
           fAlpha = pcRectArea.Color.Alpha
         }
-      });
+      };
+      return CCamCtrlRef.MV_CC_DrawRect(this.handle, ref mvccRectInfo);
     }
 
     /// <summary>Draw Circle Auxiliary Line</summary>
@@ -1890,7 +1900,7 @@ namespace MvsSharp
     {
       if (pcCircleArea == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_DrawCircle(this.handle, ref new MVCC_CIRCLE_INFO()
+      MVCC_CIRCLE_INFO mvccCircleInfo = new MVCC_CIRCLE_INFO()
       {
         fR1 = pcCircleArea.R1,
         fR2 = pcCircleArea.R2,
@@ -1905,7 +1915,8 @@ namespace MvsSharp
           fX = pcCircleArea.CenterPoint.X,
           fY = pcCircleArea.CenterPoint.Y
         }
-      });
+      };
+      return CCamCtrlRef.MV_CC_DrawCircle(this.handle, ref mvccCircleInfo);
     }
 
     /// <summary>Draw Line Auxiliary Line</summary>
@@ -1915,7 +1926,7 @@ namespace MvsSharp
     {
       if (pcLinesArea == null)
         return -2147483644;
-      return CCamCtrlRef.MV_CC_DrawLines(this.handle, ref new MVCC_LINES_INFO()
+      MVCC_LINES_INFO mvccLinesInfo = new MVCC_LINES_INFO()
       {
         nLineWidth = pcLinesArea.LineWidth,
         stColor = {
@@ -1932,7 +1943,8 @@ namespace MvsSharp
           fX = pcLinesArea.EndPoint.X,
           fY = pcLinesArea.EndPoint.Y
         }
-      });
+      };
+      return CCamCtrlRef.MV_CC_DrawLines(this.handle, ref mvccLinesInfo);
     }
 
     /// <summary>

@@ -5,6 +5,7 @@
 // Assembly location: C:\Program Files (x86)\MVS\Development\DotNet\win64\MvCamCtrl.Net.dll
 // XML documentation location: C:\Program Files (x86)\MVS\Development\DotNet\win64\MvCamCtrl.Net.xml
 
+using System.Drawing;
 using MvsSharp.CameraParams;
 
 namespace MvsSharp
